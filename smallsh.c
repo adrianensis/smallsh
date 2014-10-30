@@ -1,5 +1,6 @@
 #include "smallsh.h"
 
+// nuevo, tratamiento ante hijo muerto.
 void deadSon(int nsig, siginfo_t* info, void* nothing){
 	if(find(info->si_pid, procList) != NULL){
 		int exitstat;
@@ -15,6 +16,7 @@ void deadSon(int nsig, siginfo_t* info, void* nothing){
 	}
 }
 
+// Nuevo llamada al demonio de la lista de procesos.
 void runDaemon(int nothing){
 	alarmDaemon(procList);
 }

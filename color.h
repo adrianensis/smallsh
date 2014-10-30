@@ -24,7 +24,7 @@
 
 #define COLOR_RESET   "\x1b[0m"
 
-/*Funciones para colores*/
+// FUNCIONES PARA COLORES
 void setColor(char*);
 
 #endif

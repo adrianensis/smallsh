@@ -235,24 +235,3 @@ void printList(plist* list){
 		printNode(it);
 	}
 }
-
-// TODO BORRAR
-/*
-int main(){
-	plist* list = newList();
-
-	insert(0, list);
-	insert(1, list);
-	insert(2, list);
-	insert(15, list);
-	insert(3, list);
-	insert(18, list);
-	
-	erase(2, list);
-	erase(15, list);
-	
-	printList(list);
-	deleteList(list);
-	
-	return 0;
-}*/

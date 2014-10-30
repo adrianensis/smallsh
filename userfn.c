@@ -10,9 +10,9 @@ user_inicializar(void)
     
     promptStr = NULL;
     
-	time(&timeSeconds);
+	time(&timeSeconds); // inicializamos tiempo.
 	
-	procList = newList();
+	procList = newList(); // inicializamos la lista de procesos.
 }
 
 void
@@ -22,7 +22,7 @@ user_finalizar(void)
     alarm(0); // cancelamos la alarma del demonio.
     free(currentDirectory);
     free(initDirectory);
-    deleteList(procList);
+    deleteList(procList); // borramos lista de procesos.
     
     /*Despedida*/
     setColor(COLOR_BACK_BLUE);
@@ -39,16 +39,21 @@ user_getPrompt(void)
     /* Implementación */
     time(&timeSeconds); // actualizar tiempo
     
+    // el num de procesos es la longitud de la lista de procesos.
     char* numProcStr = malloc(5);
     sprintf (numProcStr, "%d ", procList->size);
     
+    // obtenemos la fecha.
     struct tm* t = malloc(sizeof(struct tm));
 	t = gmtime(&timeSeconds);
 	char* dateStr = getDateStr(t);
     
+    // Obtenemos el usuario. getLogin() devuelve el usuario real de UNIX, osea se tu.
+    // No es ninguna funcion interna de smallsh.
     char* userStr;
     userStr = getlogin();
     
+    // RELLENAMOS EL PROMPT
     promptStr = malloc(300);
     
     int i, j;
@@ -79,6 +84,7 @@ user_getPrompt(void)
     	j++;
     }
     
+    // liberamos las cadenas que ya no nos valen.
     free(numProcStr);
     free(dateStr);
     
@@ -89,6 +95,7 @@ char *
 user_flecha(int direccion, char* patron)
 {
     /* Implementación */
+    // TODO ?
     return NULL;
 }
 
@@ -96,12 +103,14 @@ void
 user_nueva_orden(char * orden)
 {
     /* Implementación */
+    // TODO ?
 }
 
 char *
 user_tabulador(char * parte, int numero, int numtab)
 {
     /* Implementación */
+    // TODO ?
     return NULL;
 }
 
