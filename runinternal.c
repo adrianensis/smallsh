@@ -4,16 +4,15 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-
 // Variables contadoras parciales
 int charCounter = 0;
 int wordCounter = 0;
 int lineCounter = 0;
 
 // variables contadoras totales
-int totalCharCounter = 0;
-int totalWordCounter = 0;
-int totalLineCounter = 0;
+int totalCharCounter;
+int totalWordCounter;
+int totalLineCounter;
 
 int isInternal(char* command){
 	return(strcmp(command,"cd") == 0
@@ -44,31 +43,30 @@ void otherwcFunc(){
 
 }
 
-#define COUNT(c)  \
-  charCounter++;  \
-  if((c) == '\n'){ lineCounter++; printf("LINE!\n");}
+void countChar(char c){
+  charCounter++;
+  if((c) == '\n'){
+    lineCounter++;
+  }
+}
 
 int getWord(char buf[], int offset, int sizeBuffer){
   int i = offset;
   char c;
   int stop = 0;
 
-  printf("Llego antes del primer bucle de getword\n");
   // Si el caracter es una letra, se contabiliza como palabra
   // y se sale de este bucle para contar todas las letras que tiene la palabra
   // si no es un caracter va contnado todos los espacios.
   while(!stop && (i<sizeBuffer)){
     c = buf[i];
-    printf("%c\n", c);
     if(isalpha(c)){
       wordCounter++;
-      printf("WORD!\n");
       stop = 1;
     }
 
     if(!stop){
-      COUNT(c);
-      printf("%d\n", charCounter);
+      countChar(c);
       i++;
     }
 
@@ -79,19 +77,17 @@ int getWord(char buf[], int offset, int sizeBuffer){
 
   stop = 0;
 
-  printf("Llego antes del segundo bucle\n");
   // cuenta todas las letras de la palabra
   // si es un espacio lo cuenta y se sale del bucle.
   while( !stop && (i < sizeBuffer)){
     c = buf[i];
-    COUNT(c);
+    countChar(c);
     i++;
     if(!(isalpha(c))){
       stop = 1;
     }
 
   }
-    printf("Salgo del segundo bucle\n");
 
 
   // si es fin de sizeBuffer lo indica y si no devuelve por donde debe continuar la siguiente palabra
@@ -118,17 +114,15 @@ void counterFile(char *file){
 
   int offset = 0;
 
-printf("Llego antes de empezar a leer todas las palabras\n");
   // se van leyendo todas las palabras
   while((offset = getWord(buf, offset, tam_buf)) != -1);
 
+  totalLineCounter += lineCounter;
+  totalWordCounter += wordCounter;
+  totalCharCounter += charCounter;
+
   printf ("%d %d %d %s\n", lineCounter, wordCounter ,charCounter, file);
 
-  // cierra fichero
-  if (close(fd) == -1){
-    perror("read");
-    exit(EXIT_FAILURE);
-  }
 }
 
 int runinternal(char **cline) {
@@ -157,19 +151,29 @@ int runinternal(char **cline) {
     		setAlarm(atoi(cline[1]), procList, atoi(cline[2]));
     }else if(strcmp(cline[0],"otherwc") == 0){		// si el segundo parametro no existe entonces se llama a otherwc sin opciones
 
-      // se abre el fichero
-      if(cline[2] == NULL){
-    		int fd = open (cline[1], O_RDONLY );
-			if (fd == -1){
-				perror ("read");
-				exit(EXIT_FAILURE);
-    	}
+        totalCharCounter = totalLineCounter = totalWordCounter = 0;
+        int i = 1;
+        while( cline[i] != NULL){
+            // se abre el fichero
+            int fd = open (cline[1], O_RDONLY );
 
-        printf("Llego antes de counterFile\n");
-        counterFile(cline[1]);
+            if (fd == -1){
+              perror ("read");
+              exit(EXIT_FAILURE);
+            }
 
+            counterFile(cline[i]);
+
+            i++;
+
+            // cierra fichero
+            if (close(fd) == -1){
+              perror("read");
+              exit(EXIT_FAILURE);
+            }
+        }
+        printf ("%d %d %d total\n", totalLineCounter, totalWordCounter ,totalCharCounter);
     	}
-    }
 
      return 0;
 }
