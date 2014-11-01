@@ -44,52 +44,58 @@ void otherwcFunc(){
 
 }
 
-void countChar(char c){
-  charCounter++;
-  if(c == '\n')
-    lineCounter++;
-}
+#define COUNT(c)  \
+  charCounter++;  \
+  if((c) == '\n'){ lineCounter++; printf("LINE!\n");}
 
-int getWord(char *buf[], int offset){
+int getWord(char buf[], int offset, int sizeBuffer){
   int i = offset;
   char c;
   int stop = 0;
 
-printf("Llego antes del primer bucle de getword\n");
+  printf("Llego antes del primer bucle de getword\n");
   // Si el caracter es una letra, se contabiliza como palabra
   // y se sale de este bucle para contar todas las letras que tiene la palabra
   // si no es un caracter va contnado todos los espacios.
-  while(((c = buf[i]) != EOF) && !stop){
+  while(!stop && (i<sizeBuffer)){
+    c = buf[i];
+    printf("%c\n", c);
     if(isalpha(c)){
       wordCounter++;
+      printf("WORD!\n");
       stop = 1;
     }
+
     if(!stop){
-      charCounter++;
+      COUNT(c);
+      printf("%d\n", charCounter);
       i++;
     }
+
   }
 
-  if(c == EOF)
+  if(i == sizeBuffer)
     return -1;
 
   stop = 0;
 
-printf("Llego antes del segundo bucle\n");
+  printf("Llego antes del segundo bucle\n");
   // cuenta todas las letras de la palabra
   // si es un espacio lo cuenta y se sale del bucle.
-  while(((c = buf[i]) != EOF) && !stop){
-    countChar(c);
+  while( !stop && (i < sizeBuffer)){
+    c = buf[i];
+    COUNT(c);
     i++;
-    if(!isalpha(c)){
+    if(!(isalpha(c))){
       stop = 1;
     }
 
   }
+    printf("Salgo del segundo bucle\n");
 
-  // si es EOF lo indica y si no devuelve por donde debe continuar la siguiente palabra
-  return (c != EOF)? offset+1 : -1;
 
+  // si es fin de sizeBuffer lo indica y si no devuelve por donde debe continuar la siguiente palabra
+  return (i != sizeBuffer-1) ? i : -1;
 }
 
 void counterFile(char *file){
@@ -101,7 +107,7 @@ void counterFile(char *file){
   stat(file, &st);
 
   int tam_buf = st.st_size;
-  char *buf[tam_buf];
+  char buf[tam_buf];
   int r;
 
   while((r=read(fd, buf, tam_buf)) > 0); // lee todo el fichero
@@ -114,9 +120,9 @@ void counterFile(char *file){
 
 printf("Llego antes de empezar a leer todas las palabras\n");
   // se van leyendo todas las palabras
-  while((offset = getWord(buf, offset)) != -1);
+  while((offset = getWord(buf, offset, tam_buf)) != -1);
 
-  printf ("%d %d %d %s\n", charCounter, wordCounter, lineCounter, file);
+  printf ("%d %d %d %s\n", lineCounter, wordCounter ,charCounter, file);
 
   // cierra fichero
   if (close(fd) == -1){
