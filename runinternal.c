@@ -38,11 +38,41 @@ int isInternal(char* command){
 // declaradas en los ficheros plist.c y plist.h)
 // ↓↓↓↓↓PODEMOS DECLARARLA AQUI MISMO↓↓↓↓↓
 
-// SE LE PUEDE CAMBIAR EL NOMBRE, ES POR PONER ALGO.
-void otherwcFunc(){
+
+//TODO discutir si es mejor usar los flags locales e ir pasandolos como parametros o bien
+// hacerlos variables globales.
+
+// Funcion para mostrar la salida de otherwc
+void showOutputWc(char *file, int lflag, int wflag, int cflag){
+
+  int line, word, character;
+
+  if (strcmp(file, "total") == 0){
+    line = totalLineCounter;
+    word = totalWordCounter;
+    character = totalCharCounter;
+  }else{
+    line = lineCounter;
+    word = wordCounter;
+    character = charCounter;
+  }
+
+  // Para cuando no se dice nada, se consideran todas los flags activos
+  if ((lflag == 0) && (wflag == 0) && (cflag == 0))
+    lflag = wflag = cflag = 1;
+
+  if (lflag)
+    printf("%d ", line);
+  if (wflag)
+    printf("%d ", word);
+  if (cflag)
+    printf("%d ", character);
+  printf("%s\n", file);
 
 }
 
+// TODO cada vez que se ejecuta un exit(1) o exit(EXIT_FAILURE) se producen errores en la terminal del sitema
+// fuera de smallsh
 void countChar(char c){
   charCounter++;
   if((c) == '\n'){
@@ -89,12 +119,11 @@ int getWord(char buf[], int offset, int sizeBuffer){
 
   }
 
-
   // si es fin de sizeBuffer lo indica y si no devuelve por donde debe continuar la siguiente palabra
   return (i != sizeBuffer-1) ? i : -1;
 }
 
-void counterFile(char *file){
+void counterFile(char *file, int lflag, int wflag, int cflag){
   // abre el fichero
   int fd = open (file, O_RDONLY );
   // se obtiene su estado
@@ -121,8 +150,80 @@ void counterFile(char *file){
   totalWordCounter += wordCounter;
   totalCharCounter += charCounter;
 
-  printf ("%d %d %d %s\n", lineCounter, wordCounter ,charCounter, file);
+  showOutputWc(file, lflag, wflag, cflag);
 
+}
+// SE LE PUEDE CAMBIAR EL NOMBRE, ES POR PONER ALGO.
+void otherwcFunc(char **cline){
+
+  // Se inician los contadores totales a 0
+  // Solo se muestran si hay mas de un fichero como parametro
+  totalCharCounter = totalLineCounter = totalWordCounter = 0;
+
+  int totalFlag = -1;
+  int i = 1;
+  int j = 1;
+
+  //parametros inicialmente a 0
+  int lflag, wflag, cflag;
+  lflag = wflag = cflag = 0;
+
+  // Se reconocen todos los flags de opciones
+  while(cline[i][0] == '-'){
+    switch(cline[i][j]){
+      case 'l': lflag = 1; break;
+      case 'w': wflag = 1; break;
+      case 'c': cflag = 1; break;
+      default : printf ("Uso: wc [-cwl] FILE [FILE ... ]  --> %c\n", cline[i][j]); break;
+    }
+
+    // avanza al siguiente caracter de una opcion para las del tipo (-lw)
+    j++;
+
+    // si no existen mas caracteres en esa opcion, se avanza al siguiente parametro
+    if(cline[i][j] == '\0'){
+      i++;
+      j = 1;
+    }
+  }
+
+  // se empiezan a tratar los ficheros
+  while( cline[i] != NULL){
+
+      // se abre el fichero
+      int fd = open (cline[i], O_RDONLY );
+
+      if (fd == -1){
+        char outputError[100];
+        sprintf(outputError, "%s: %s: No existe el fichero\n", cline[0], cline[i]);
+        perror (outputError);
+        exit(EXIT_FAILURE);
+      }
+
+      counterFile(cline[i], lflag, wflag, cflag);
+      totalFlag++;
+      i++;
+
+      // cierra fichero
+      if (close(fd) == -1){
+        perror("read");
+        exit(EXIT_FAILURE);
+      }
+
+  }
+
+  // Si no se le pasa fichero como parametro se muestra la forma de hacerlo
+  if(i < 2){
+
+    printf ("Uso: wc [-cwl] FILE [FILE ... ]\n");
+   // exit(EXIT_FAILURE); TODO - Cuando sale con fallo, no debe salir de la aplicacion,
+  // ademas cuando sale toca algo que hace que la terminal normal del sistema (fuera de smallsh)
+  // no funcione bien
+
+  }else if(i > 2){
+    // Solo cuando hay mas de dos ficheros se muestra el total
+    showOutputWc("total", lflag, wflag, cflag);
+  }
 }
 
 int runinternal(char **cline) {
@@ -151,29 +252,8 @@ int runinternal(char **cline) {
     		setAlarm(atoi(cline[1]), procList, atoi(cline[2]));
     }else if(strcmp(cline[0],"otherwc") == 0){		// si el segundo parametro no existe entonces se llama a otherwc sin opciones
 
-        totalCharCounter = totalLineCounter = totalWordCounter = 0;
-        int i = 1;
-        while( cline[i] != NULL){
-            // se abre el fichero
-            int fd = open (cline[1], O_RDONLY );
-
-            if (fd == -1){
-              perror ("read");
-              exit(EXIT_FAILURE);
-            }
-
-            counterFile(cline[i]);
-
-            i++;
-
-            // cierra fichero
-            if (close(fd) == -1){
-              perror("read");
-              exit(EXIT_FAILURE);
-            }
-        }
-        printf ("%d %d %d total\n", totalLineCounter, totalWordCounter ,totalCharCounter);
-    	}
+      otherwcFunc(cline);
+    }
 
      return 0;
 }
