@@ -4,12 +4,13 @@
 CFLAGS=-g -Wall
 LDLIBS=-lfl # Para flex
 
-OBJECTS=smallsh.o runinternal.o color.o plist.o gettok.o procline.o runcom.o buffer.o userfn.o shell.o
+OBJECTS=smallsh.o runinternal.o findbysize.o color.o plist.o gettok.o procline.o runcom.o buffer.o userfn.o shell.o
 
 smallsh: $(OBJECTS)
 
 # nuevo
 runinternal.o: runinternal.c 
+findbysize.o: findbysize.c
 plist.o: plist.c
 color.o: color.c
 

@@ -21,6 +21,7 @@
 #include <time.h> // para time_t
 #include "color.h"
 #include "plist.h"
+#include "findbysize.h"
 
 #define MAXARG 512
 
