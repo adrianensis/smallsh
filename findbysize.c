@@ -1,30 +1,41 @@
 #include "findbysize.h"
 #include "color.h"
+#include "errno.h"
 
 // argumento: descriptor de ficheros
-bool isDir(int fileDesc){
-	/*usar:
-	int fstat(int fileDescriptor, struct stat* buf);
-	nos interesa obtener buf->st_mode.
-	S_ISDIR(buf->st_mode);*/
+
+struct stat getStat(int fileDesc){
+	struct stat buf;
+	if(fstat(fileDesc, &buf) == -1){
+		perror("Error al obtener las estadisticas del fichero.");
+		exit(EXIT_FAILURE);
+	}
+	return buf;
 }
 
-bool isReg(int fileDesc){
-	//S_ISREG(buf->st_mode);
+int isDir(int fileDesc){
+	struct stat buf = getStat(fileDesc);
+	return S_ISDIR(buf.st_mode);
 }
 
-bool sizeOK(int max, int min, int fileDesc){
-
+int isReg(int fileDesc){
+	struct stat buf = getStat(fileDesc);
+	return S_ISREG(buf.st_mode);
 }
 
-#define REG 0
-#define DIR 1
+int sizeOK(int max, int min, int fileDesc){
+	
+}
+
+#define R 0 // regular
+#define D 1 // directorio
 void printLine(char* name, int type){
-	/*
-	if type==REG
-		print color1
-	else if type==DIR
-		print color2*/
+	if(type==R){
+		setColor(COLOR_BACK_YELLOW);
+		printf("%s\n", name);
+		setColor(COLOR_RESET);
+	}else if(type==D)
+		printf("%s\n", name);
 }
 
 // Procesar entrada
@@ -43,25 +54,27 @@ int processEntry(char* name){
 	
 	// Procesar
 	struct stat statBuf;
-	fstat(fd, &statBuf)
+	fstat(fd, &statBuf);
 	
 	if(isReg(fd)){
-		retValue=REG;
-		printLine(name,REG);
+		retValue=R;
+		printLine(name,R);
 	}
 	else if(isDir(fd)){
-		retValue=DIR;
+		retValue=D;
 	}
 		
 	
 	// Cerrar
 	if(close(fd) == -1){
-			perror("close");
-			exit(EXIT_FAILURE);
-		}
+		perror("close");
+		exit(EXIT_FAILURE);
+	}
+		
+	return retValue;
 }
 
-void deepFind(int max, int min, char* dir){
+void deepFind(int max, int min, char* dirname){
 	/*analizar que hay en dir y mostrar ficheros reg aptos,
 	si hay mas directorios:
 	para cada subdir hacer deepFind(subdir)*/
@@ -93,9 +106,9 @@ void deepFind(int max, int min, char* dir){
 	
 	********************************************/
 	
-	printLine(dir,DIR);
+	printLine(dirname,D);
 	
-	DIR* dir = opendir(dir);
+	DIR* dir = opendir(dirname);
 	if(dir == NULL){
 		perror("open");
 		exit(EXIT_FAILURE);
@@ -103,16 +116,16 @@ void deepFind(int max, int min, char* dir){
 	
 	struct dirent *entry;
 	
+	// readdir devuelve NULL tanto si ha ido mal como si ha acabado de leer.
+	// Por eso el error se comprueba con errno.
 	errno = 0;
-	// readdir devuelve NULL tanto si ha ido mal como si ha acabado de leer
 	
-	
-	// TODO MAL, hay que procesar los ficheros reg y por ultimo los dir.
-	// TODO hacer un buffer de directorios?
-	/*while((entry = readdir(dir)) != NULL){
-		if(processEntry(entry->d_name)==DIR)
+	while((entry = readdir(dir)) != NULL){
+		if(processEntry(entry->d_name)==REG)
+			printf(entry->d_name,R);
+		else
 			deepFind(max,min,entry->d_name);
-	}*/
+	}
 	
 }
 
@@ -136,7 +149,8 @@ void findbysize(int max, int min, int numDirs, char** dirs){
 					3) /home/adri/Dropbox/gifs
 	*/
 	
-	for(int i=0; i<numDirs; i++){
+	int i;
+	for(i=0; i<numDirs; i++){
 		deepFind(max, min, dirs[i]);
 	}
 
