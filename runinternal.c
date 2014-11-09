@@ -19,7 +19,8 @@ int isInternal(char* command){
 	|| strcmp(command,"exit") == 0
 	|| strcmp(command,"bgproc") == 0
 	|| strcmp(command,"alarma") == 0
-	|| strcmp(command,"otherwc")== 0);
+	|| strcmp(command,"otherwc")== 0
+	|| strcmp(command,"findbysize")== 0);
 }
 
 
@@ -247,12 +248,13 @@ int runinternal(char **cline) {
 		printList(procList);
 		printf("--------------------------------------------------\n");
 
-    }else if(strcmp(cline[0],"alarma") == 0){
-    	if(cline[1] != NULL && cline[2] != NULL)
+    }else if((strcmp(cline[0],"alarma") == 0) && (cline[1] != NULL) && (cline[2] != NULL)){
     		setAlarm(atoi(cline[1]), procList, atoi(cline[2]));
     }else if(strcmp(cline[0],"otherwc") == 0){		// si el segundo parametro no existe entonces se llama a otherwc sin opciones
 
       otherwcFunc(cline);
+    }else if((strcmp(cline[0],"findbysize") == 0) && (cline[1] != NULL) && (cline[2] != NULL)){
+		findbysize(cline);
     }
 
      return 0;
