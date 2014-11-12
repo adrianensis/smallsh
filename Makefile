@@ -10,9 +10,10 @@ smallsh: $(OBJECTS)
 
 # nuevo
 runinternal.o: runinternal.c 
-findbysize.o: findbysize.c
-plist.o: plist.c
 color.o: color.c
+findbysize.o: findbysize.c
+
+plist.o: plist.c
 
 gettok.o: gettok.c
 
