@@ -1,5 +1,6 @@
 #include "smallsh.h"
 
+#define DEBUG 0
 /* El siguiente procedimiento procesa una línea de entrada. La ejecución
  * termina cuando se encuentra un final de línea ('\n'). El carácter ';'
  * sirve para separar unas órdenes de otras y el carácter '&' permite
@@ -17,6 +18,8 @@ procline(struct TokBuf * tb) {
     // provisional a falta de saber si es asi
     //---------------------------------------
     int typepipe = 0;
+    int posInPipe = 0;  /*              command1 % command2 % ... % commandN    */
+                        /* posInPipe =     0           1                -1      */
     int readOutput = 0;
     char * pipeToRead = NULL;
 
@@ -55,38 +58,37 @@ procline(struct TokBuf * tb) {
                         if (narg != 0) {
                                 arg[narg] = NULL; /*El ultimo se establece NULL*/
                                 if(readOutput > 0){
-                                    if (pipeToRead == NULL)
-                                        printf("NULO\n");
-                                    else{
-                                        printf("NO porciento\n");
-                                        printf("leer de: %s\n", pipeToRead);
-                                        typepipe = -1;
-                                        pipeToRead = runcommandPipe(arg, where, typepipe, readOutput, pipeToRead);
-                                    }
-                                }else{
-                                    if(isInternal(arg[0]))
+                                    if(DEBUG){printf("NO porciento\n");}
+                                    if(DEBUG){printf("leer de: %s\n", pipeToRead);}
+                                    posInPipe = -1;
+                                    pipeToRead = runcommandPipe(arg, where, typepipe, posInPipe, pipeToRead);
+                                    // borrar tmp
+                                }else if(isInternal(arg[0])){
                                         runinternal(arg); // nuevo
-                                    else
+                                }else{
                                         runcommand(arg, where);
                                 }
-
                         }
+
                         /* Seguir con la siguiente orden. Esto se da
                          * si se han introducido varias órdenes
                          * separadas por ';' o '&'. */
                         narg = 0;
                         break;
                 case PORCIENTO:
+                case PIPE:
+                        typepipe = (toktype == PORCIENTO) ? NAMEDPIPE : UNNAMEDPIPE;
+
                         where = (toktype == AMPERSAND) ? BACKGROUND :
                             FOREGROUND;
                         if (narg != 0) {
                                 arg[narg] = NULL; /*El ultimo se establece NULL*/
-                                printf("porcientoDentro\n");
-                                pipeToRead = runcommandPipe(arg, where, typepipe, readOutput, pipeToRead);
-                                typepipe = 1; // es un comando de los que leen y escriben
-                                printf("Sale del runcommand: %s\n", pipeToRead);
+                                if(DEBUG){printf("porcientoDentro\n");}
+                                pipeToRead = runcommandPipe(arg, where, typepipe, posInPipe, pipeToRead);
+                                posInPipe = 1; // es un comando de los que leen y escriben
+                                if(DEBUG){printf("Sale del runcommand: %s\n", pipeToRead);}
                                 readOutput = 1; /*Establece que el siguiente debe leer la tuberia*/
-                                printf("siguiente lee de: %s\n", pipeToRead);
+                                if(DEBUG){printf("siguiente lee de: %s\n", pipeToRead);}
                         }
                         /* Seguir con la siguiente orden. Esto se da
                          * si se han introducido varias órdenes

@@ -1,17 +1,20 @@
 #include "smallsh.h"
 
+
 // nuevo, tratamiento ante hijo muerto.
 void deadSon(int nsig, siginfo_t* info, void* nothing){
 	if(find(info->si_pid, procList) != NULL){
 		int exitstat;
 		printf("\n");
 		setColor(COLOR_BACK_GREEN);
-		printf("Proceso en segundo plano terminado, recibida señal %d:\n[%d] ha retornado:", SIGCHLD, info->si_pid);
-		setColor(COLOR_RESET);
+		// %c, 164 imprime la "ñ"
+		printf("Proceso en segundo plano terminado, recibida signal %d:\n[%d] ha retornado:", SIGCHLD, info->si_pid);
 
 		/* Esperar al proceso hijo (obligatorio para que no quede Zombie) */
 		wait (&exitstat);
-		printf(" %d\n", exitstat);
+		printf(" %d", exitstat);
+		setColor(COLOR_RESET);
+		printf("\n");
 		erase(info->si_pid, procList);
 	}
 }
@@ -30,7 +33,7 @@ main(int argc, char **argv)
 		*/
 		struct sigaction action;
 		sigset_t set;
-		
+
 		sigemptyset(&set);
 		sigaddset(&set,SIGCHLD);
 		action.sa_sigaction=deadSon;
@@ -43,13 +46,13 @@ main(int argc, char **argv)
 
 		signal(SIGINT,SIG_IGN);
 		signal(SIGQUIT,SIG_IGN);
-		
+
 		signal(SIGALRM, runDaemon);
-		
+
 		// Arrancamos el demonio
 		runDaemon(0);
 		alarm(1);
-		
+
 
         struct TokBuf *tb;
         struct Buffer *buf;
@@ -68,7 +71,7 @@ main(int argc, char **argv)
         		/*nuevo*/
         		if(strcmp(buf->data, "exit") == 0)
         			exit = 1;
-        			
+
                 tb = gettok(buf->data);
 
                 procline(tb);
@@ -78,7 +81,7 @@ main(int argc, char **argv)
                 free (tb);
                 liberaBuffer(buf);
                 free (buf);
-        
+
         }
 
         /* Restaurar el modo de la entrada */
