@@ -9,11 +9,10 @@ OBJECTS=smallsh.o runinternal.o findbysize.o color.o plist.o gettok.o procline.o
 smallsh: $(OBJECTS)
 
 # nuevo
-runinternal.o: runinternal.c 
-color.o: color.c
+runinternal.o: runinternal.c
 findbysize.o: findbysize.c
-
 plist.o: plist.c
+color.o: color.c
 
 gettok.o: gettok.c
 

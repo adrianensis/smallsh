@@ -19,20 +19,24 @@
 
 /*Nuevas librerias incluidas*/
 #include <time.h> // para time_t
+#include <errno.h> // para errno
 #include "color.h"
 #include "plist.h"
 #include "findbysize.h"
-#include "pipe.h"
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define MAXARG 512
+#define INSPIPE 5
 
 #define FOREGROUND 0
 #define BACKGROUND 1
 
-/*Nuevos defines*/
-#define MAXPIPES 128 // TODO cuantos poner ?
+/*Nuevas macros para las tuberias*/
+#define NAMEDPIPE 2
+#define UNNAMEDPIPE 3
 
-/*Nuevas Variables globales*/
+/*Variables globales*/
 char* currentDirectory;
 char* initDirectory;
 time_t timeSeconds;
@@ -43,10 +47,12 @@ plist* procList;
 void procline(struct TokBuf*);
 int runcommand(char **, int);
 
+/*Nueva funcion sobrecargada para tuberias*/
+char * runcommandPipe(char **, int, int, int, char *);
+
 /*Nuevas Funciones*/
 int isInternal(char*);
 int runinternal(char **);
-void runPipe(int numPipes, char*** arg);
 
 #endif
 
