@@ -22,15 +22,13 @@
 #include "color.h"
 #include "plist.h"
 #include "findbysize.h"
-#include "pipe.h"
+#include "trietree.h"
+#include "strlist.h"
 
 #define MAXARG 512
 
 #define FOREGROUND 0
 #define BACKGROUND 1
-
-/*Nuevos defines*/
-#define MAXPIPES 128 // TODO cuantos poner ?
 
 /*Nuevas Variables globales*/
 char* currentDirectory;
@@ -38,6 +36,8 @@ char* initDirectory;
 time_t timeSeconds;
 char* promptStr; // Prompt, lo pongo global para liberarlo en user finalizar.
 plist* procList;
+trieTree* dictionary;
+strlist* cmdHistory;
 
 /*Funciones*/
 void procline(struct TokBuf*);
@@ -46,7 +46,6 @@ int runcommand(char **, int);
 /*Nuevas Funciones*/
 int isInternal(char*);
 int runinternal(char **);
-void runPipe(int numPipes, char*** arg);
 
 #endif
 

@@ -1,37 +1,8 @@
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
-#include <stdio.h>
-
 #include "findbysize.h"
+#include "fileutil.h"
 #include "color.h"
-#include "errno.h"
 
 int level = 0; // Nivel de profundiad.
-
-// argumento: descriptor de ficheros
-struct stat getStat(int fileDesc){
-	struct stat buf;
-	if(fstat(fileDesc, &buf) == -1){
-		perror("Error al obtener las estadisticas del fichero.");
-		exit(EXIT_FAILURE);
-	}
-	return buf;
-}
-
-int isDir(int fileDesc){
-	struct stat buf = getStat(fileDesc);
-	return S_ISDIR(buf.st_mode);
-}
-
-int isReg(int fileDesc){
-	struct stat buf = getStat(fileDesc);
-	return S_ISREG(buf.st_mode);
-}
 
 int sizeOK(int max, int min, int fileDesc){
 	struct stat buf = getStat(fileDesc);
@@ -65,32 +36,12 @@ void printLine(char* name, int type){
 int processEntry(char* name){
 
 	int retValue; // La funcion devuelve si la entrada es un fichero reg o un dir
-
-	// Abrir
-	int fd = open(name, O_RDONLY);
 	
-	// TODO exit o tratar o notificar?
-	if(fd==-1){
-		perror("read");
-		exit(EXIT_FAILURE);
-	}
-	
-	// Procesar
-	struct stat statBuf;
-	fstat(fd, &statBuf);
-	
-	if(isReg(fd)){
+	if(isReg(name)){
 		retValue=R;
 	}
-	else if(isDir(fd)){
+	else if(isDir(name)){
 		retValue=D;
-	}
-		
-	
-	// Cerrar
-	if(close(fd) == -1){
-		perror("close");
-		exit(EXIT_FAILURE);
 	}
 		
 	return retValue;
@@ -175,5 +126,7 @@ void findbysize(char** cline){
 			deepFind(max, min, arrayDir[i]);
 		}
 	}
+	
+	free(arrayDir);
 
 }

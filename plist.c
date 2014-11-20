@@ -145,8 +145,8 @@ void alarmDaemon(plist* list){
 	
 		/*Buffer para almacenar los procesos terminados*/
 		int i = 0;
-		int n = 64; // capacidad del buffer
-		int* buffer = malloc(sizeof(int)*n);
+		int n = 12; // capacidad del buffer
+		int buffer[n];
 
 		time_t t;
 	

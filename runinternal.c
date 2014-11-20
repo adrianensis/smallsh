@@ -233,6 +233,13 @@ int runinternal(char **cline) {
      	if(cline[1] != 0){
      		chdir(cline[1]);
      		getcwd (currentDirectory, 128);
+     		
+     		// Recargamos diccionario.
+			deleteTrieTree(dictionary);
+			dictionary = newTrieTree();
+			loadTrieTree(dictionary, "/usr/bin");
+			loadTrieTree(dictionary, currentDirectory);
+			
      	}else{
      		chdir(initDirectory);
      		getcwd (currentDirectory, 128);

@@ -13,6 +13,12 @@ user_inicializar(void)
 	time(&timeSeconds); // inicializamos tiempo.
 	
 	procList = newList(); // inicializamos la lista de procesos.
+	
+	dictionary = newTrieTree(); // inicializamos el diccionario de comandos.
+	loadTrieTree(dictionary, "/usr/bin");
+	loadTrieTree(dictionary, currentDirectory);
+	
+	cmdHistory = newStrList(); // inicializamos la lista historial de comandos.
 }
 
 void
@@ -23,6 +29,8 @@ user_finalizar(void)
     free(currentDirectory);
     free(initDirectory);
     deleteList(procList); // borramos lista de procesos.
+    deleteTrieTree(dictionary);
+    deleteStrList(cmdHistory);
     
     /*Despedida*/
     setColor(COLOR_BACK_BLUE);
@@ -94,16 +102,27 @@ user_getPrompt(void)
 char *
 user_flecha(int direccion, char* patron)
 {
-    /* Implementación */
-    // TODO ?
-    return NULL;
+	char* cmd;
+	
+	if(direccion == FLECHA_ARRIBA)
+    	cmd = prevStr(cmdHistory);
+    else if(direccion == FLECHA_ABAJO)
+    	cmd = nextStr(cmdHistory);
+    	
+    if(cmd == NULL){
+    	cmd = malloc(1);
+    	cmd[0] = '\0';
+    	return cmd;
+    }else
+    	return cmd;
 }
 
 void
 user_nueva_orden(char * orden)
 {
-    /* Implementación */
-    // TODO ?
+	resetCurrent(cmdHistory);
+	if(strlen(orden) > 0)
+    	pushBack(cmdHistory, orden);
 }
 
 char *
@@ -111,6 +130,10 @@ user_tabulador(char * parte, int numero, int numtab)
 {
     /* Implementación */
     // TODO ?
+    
+   	if((strlen(parte) > 0) && (numtab == 2))
+   		autoComplete(dictionary, parte);
+
     return NULL;
 }
 

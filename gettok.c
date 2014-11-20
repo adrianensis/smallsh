@@ -61,7 +61,7 @@ userin()
                 /* Backspace: 127 */
                 /* Tabulador: 9 */
 
-                /* Identificar un carácter normal o una pulsación de
+                /* Identificar un carácter normal o ufna pulsación de
                  * tecla especial
                  */
                  
@@ -106,8 +106,11 @@ userin()
                                 iniciaBuffer(buf, tmpstr);
                                 free(tmpstr);
 
-                                printf("\r%s\r%s {%s} %s",
-                                       blanco, prompt, pattern.data, buf->data);
+                               /*printf("\r%s\r%s {%s} %s",
+                                       blanco, prompt, pattern.data, buf->data);*/
+                                       
+                                printf("\r%s\r%s %s",
+                                       blanco, prompt, buf->data);
                         } else {
                                 count = 0;
                                 search = 0;
