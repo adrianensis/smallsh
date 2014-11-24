@@ -64,7 +64,7 @@ userin()
                 /* Identificar un carácter normal o ufna pulsación de
                  * tecla especial
                  */
-                 
+
                 switch (c)
                 {
                 case 27:
@@ -106,9 +106,8 @@ userin()
                                 iniciaBuffer(buf, tmpstr);
                                 free(tmpstr);
 
-                               /*printf("\r%s\r%s {%s} %s",
-                                       blanco, prompt, pattern.data, buf->data);*/
-                                       
+                                printf("\33[2K\r"); // borra todo lo que sigue al prompt en la
+                                                    // linea actual antes de imprimir el nuevo comando
                                 printf("\r%s\r%s %s",
                                        blanco, prompt, buf->data);
                         } else {

@@ -19,16 +19,24 @@
 
 /*Nuevas librerias incluidas*/
 #include <time.h> // para time_t
+#include <errno.h> // para errno
 #include "color.h"
 #include "plist.h"
 #include "findbysize.h"
 #include "trietree.h"
 #include "strlist.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define MAXARG 512
 
 #define FOREGROUND 0
 #define BACKGROUND 1
+
+/*Nuevas macros para las tuberias*/
+#define NAMEDPIPE 2
+#define UNNAMEDPIPE 3
 
 /*Nuevas Variables globales*/
 char* currentDirectory;
@@ -42,6 +50,10 @@ strlist* cmdHistory;
 /*Funciones*/
 void procline(struct TokBuf*);
 int runcommand(char **, int);
+
+/*Nueva funcion sobrecargada para tuberias*/
+int runcommandPipe(char **, int, int, int, int);
+void cleanNamedPipes(void);
 
 /*Nuevas Funciones*/
 int isInternal(char*);
