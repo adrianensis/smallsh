@@ -23,11 +23,15 @@
 #include "color.h"
 #include "plist.h"
 #include "findbysize.h"
+#include "otherwc.h"
 #include "trietree.h"
 #include "strlist.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+/* Estructura para almacenar instrucciones */
+//#include "sortedArrayMap.h"
 
 #define MAXARG 512
 
@@ -53,7 +57,6 @@ int runcommand(char **, int);
 
 /*Nueva funcion sobrecargada para tuberias*/
 int runcommandPipe(char **, int, int, int, int);
-void cleanNamedPipes(void);
 
 /*Nuevas Funciones*/
 int isInternal(char*);

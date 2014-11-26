@@ -1,31 +1,12 @@
-#include <stdlib.h>
-#include <string.h>
-
-#define RESIZEPERCENT 0.20;
-
-// Estructura que contendra el array, un par clave-valor, donde la clave es un string y el valor un puntero a funcion
-// con una lista variable de parametros
-typedef void (*pFunction)(char * , ...) value;
-typedef struct Set{
-	char *key;
-	value pFunction; // Puntero a funcion con argumentos variables
-} Set;
-
-// Estructura que almacena el array de sets, guarda el tamano del array y el numero de elementos que contiene
-typedef struct Map{
-	int arraySize;
-	int nElems;
-	Set *array;
-} Map;
+#include "sortedArrayMap.h"
 
 // Funcion para crear un nuevo mapa con un array vacio de un tamano a elegir
 // El mapa no es generico en cuanto a los tipos que contiene
-Map* newMap(int arraySize){
-	Map *map = malloc(sizeof(Set) * arraySize);
+void newMap(Map* map, int arraySize){
+	map = malloc(sizeof(Set) * arraySize);
 	map->arraySize = arraySize;
 	map->array = (Set*) malloc(sizeof(Set)* arraySize);
 	map->nElems = 0;
-	return map;
 }
 
 // Funcion para incrementar el tamano del array en un porcentaje establecido por RESIZEPERCENT
@@ -60,17 +41,17 @@ void insertInOrder(Map map, Set set){
 			menor = 1;
 			move(map, i, map.nElems);
 			map.array[i].key = set.key;
-			map.array[i].value = set.(&pFunction)();
+			map.array[i].value = set.value;
 		} // en otro caso, ya esta insertado y no se hace nada
 	}
 }
 
 
 // Funcion para insertar nuevos elementos al mapa indicando el par clave-valor
-void insertSet(Map map, char *key, value pFunction{
+void insertSet(Map map, char *key, pFunction value){
 	Set set;
 	set.key = key;
-	set.pFunction = pFunction;
+	set.value = value;
 
 	map.nElems += 1;
 
@@ -88,7 +69,7 @@ void deleteSet(char *key){
 
 // Funcion que realiza la busqueda binaria de una clave y devuelve su valor
 // void (*(*searchSet)(Map map, char *key))(char *key)
-void searchSet(Map map, char *key){ // como devuelvo puntero a funcion?
+pFunction searchSet(Map map, char *key){ // como devuelvo puntero a funcion?
 	int first = 0;
 	int last = map.nElems-1;
 	int middle = (first+last)/2;
@@ -101,7 +82,7 @@ void searchSet(Map map, char *key){ // como devuelvo puntero a funcion?
       	if ( strcmp(map.array[middle].key,key) < 0)
         	first = middle + 1;
       	else if ( strcmp(map.array[middle].key,key) == 0 ) {
-         	funcPointer = map.array[middle].pFunction;
+         	funcPointer = map.array[middle].value;
          	found = 1;
       	}
       	else
