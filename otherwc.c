@@ -98,6 +98,11 @@ void countFile(char *file, int lflag, int wflag, int cflag){
 
   if (fd == -1){
     perror ("Error al abrir fichero para lectura");
+        /* Restaurar el modo de la entrada */
+        modoInterpretado(0, 1);
+
+        /* Finalmente, a la función de finalización */
+        user_finalizar();
     exit(EXIT_FAILURE);
   }
 
