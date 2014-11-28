@@ -1,5 +1,6 @@
 #include "strlist.h"
 
+// Constructor de nodo.
 strnode* newStrNode(char* str){
 	strnode* node = (strnode*)malloc(sizeof(strnode));
 	node->next = NULL;
@@ -9,11 +10,13 @@ strnode* newStrNode(char* str){
 	return node;
 }
 
+// Destructor de nodo.
 void deleteStrNode(strnode* node){
 	free(node->str);
 	free(node);
 }
 
+// Constructor de lista.
 strlist* newStrList(){
 	strlist* list = (strlist*)malloc(sizeof(strlist));
 	list->first = NULL;
@@ -24,6 +27,7 @@ strlist* newStrList(){
 	return list;
 }
 
+// Destructor de lista.
 void deleteStrList(strlist* list){
 
 	strnode* it, *aux;
@@ -40,6 +44,7 @@ void deleteStrList(strlist* list){
 	free(list);
 }
 
+// Inserta una cadena al final de la lista.
 void pushBack(strlist* list, char* str){
 
 	strnode* node = newStrNode(str);
@@ -57,10 +62,12 @@ void pushBack(strlist* list, char* str){
 		
 }
 
+// Devuelve la cadena seleccionada actualmente en la lista.
 char* getCurrent(strlist* list){
 	return list->selected->str;
 }
 
+// Avanza a la siguiente cadena y la establece como la actual seleccionada.
 char* nextStr(strlist* list){
 	if((list->size > 0) && (list->selected->next != NULL)){
 		list->selected = list->selected->next;
@@ -70,6 +77,7 @@ char* nextStr(strlist* list){
 		return NULL;
 }
 
+// Retrocede a la anterior cadena y la establece como la actual seleccionada.
 char* prevStr(strlist* list){
 	if((list->size > 0) && (list->selected != NULL)){
 		char* aux = strdup(list->selected->str);
@@ -80,6 +88,7 @@ char* prevStr(strlist* list){
 		return NULL;
 }
 
+// Devuelve el puntero de cadena seleccionada a la cabeza de la lista.
 void resetCurrent(strlist* list){
 	list->selected = list->first;
 }

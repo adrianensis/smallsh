@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-// argumento: descriptor de ficheros
 struct stat getStat(int fileDesc);
 
 int isDir(char* name);

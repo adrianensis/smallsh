@@ -1,87 +1,79 @@
 #include "fileutil.h"
 
-// argumento: descriptor de ficheros
+// Funcion que devuelve las estadisticas de un fichero a partir de su descriptor.
 struct stat getStat(int fileDesc){
 	struct stat buf;
 	if(fstat(fileDesc, &buf) == -1){
 		perror("Error al obtener las estadisticas del fichero.");
-		exit(EXIT_FAILURE);
 	}
+	
 	return buf;
 }
 
+// Funcion para saber si el fichero es un directorio o no.
 int isDir(char* name){
 
-	int retValue; // La funcion devuelve si la entrada es un fichero reg o un dir
+	int retValue = -1;
 
 	// Abrir
 	int fd = open(name, O_RDONLY);
 	
-	// TODO exit o tratar o notificar?
 	if(fd==-1){
-		perror("read");
-		exit(EXIT_FAILURE);
-	}
-
-	struct stat buf = getStat(fd);
-	retValue = S_ISDIR(buf.st_mode);
+		perror("Fallo al abrir el fichero.");
+	}else{
+		struct stat buf = getStat(fd);
+		retValue = S_ISDIR(buf.st_mode);
 	
-	// Cerrar
-	if(close(fd) == -1){
-		perror("close");
-		exit(EXIT_FAILURE);
+		// Cerrar
+		if(close(fd) == -1){
+			perror("Fallo al cerrar el fichero");
+		}
 	}
 		
 	return retValue;
-
 }
 
+// Funcion para saber si el fichero es regular o no.
 int isReg(char* name){
 
-	int retValue; // La funcion devuelve si la entrada es un fichero reg o un dir
+	int retValue = -1;
 
 	// Abrir
 	int fd = open(name, O_RDONLY);
 	
-	// TODO exit o tratar o notificar?
 	if(fd==-1){
-		perror("read");
-		exit(EXIT_FAILURE);
-	}
-
-	struct stat buf = getStat(fd);
-	retValue = S_ISREG(buf.st_mode);
+		perror("Fallo al abrir el fichero.");
+	}else{
+		struct stat buf = getStat(fd);
+		retValue = S_ISREG(buf.st_mode);
 	
-	// Cerrar
-	if(close(fd) == -1){
-		perror("close");
-		exit(EXIT_FAILURE);
+		// Cerrar
+		if(close(fd) == -1){
+			perror("Fallo al cerrar el fichero");
+		}
 	}
 		
 	return retValue;
-
 }
 
+// Funcion para saber si el fichero es ejecutable o no.
 int isExe(char* name){
 
-	int retValue; // La funcion devuelve si la entrada es un fichero reg o un dir
+	int retValue = -1;
 
 	// Abrir
 	int fd = open(name, O_RDONLY);
 	
-	// TODO exit o tratar o notificar?
 	if(fd==-1){
-		perror("read");
-		exit(EXIT_FAILURE);
-	}
-
-	struct stat buf = getStat(fd);
-	retValue = buf.st_mode & S_IXUSR;
+		perror("Fallo al abrir el fichero.");
+	}else{
+		struct stat buf = getStat(fd);
+		retValue =  buf.st_mode & S_IXUSR;
 	
-	// Cerrar
-	if(close(fd) == -1){
-		perror("close");
-		exit(EXIT_FAILURE);
+		// Cerrar
+		if(close(fd) == -1){
+			perror("Fallo al cerrar el fichero");
+		}
 	}
 		
 	return retValue;

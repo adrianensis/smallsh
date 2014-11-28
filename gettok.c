@@ -126,7 +126,9 @@ userin()
                                 tmpstr = parteTab(buf->data, count);
 
                                 if (tabstatus != 2)
-                                        tabstatus++;
+                                    tabstatus++;
+                                else
+                                	tabstatus = 1;
                                 tmpstr = user_tabulador(tmpstr, i, tabstatus);
                                 if (tmpstr)
                                 {

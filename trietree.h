@@ -8,6 +8,7 @@
 
 typedef struct trieNode{
 	struct trieNode* father;
+	int numSons;
 	struct trieNode** array; 
 }trieNode;
 
@@ -25,8 +26,8 @@ trieTree* newTrieTree();
 void deleteTrieTree(trieTree* tree);
 void addStr(trieTree* tree, char* str);
 void printTree(trieTree* tree);
-void printTreeAux(trieNode* head, char* str, int index);
-void autoComplete(trieTree* tree, char* str); // imprime las posibles palabras candidatas para completar str.
+void predict(trieTree* tree, char* str); // imprime las posibles palabras candidatas para completar str.
+char* autoComplete(trieTree* tree, char* str);
 void loadTrieTree(trieTree* tree, char* dirPath); // Se cargaran en el arbol el nombre de todos los ejecutables existentes en el directorio.
 
 #endif

@@ -1,5 +1,6 @@
 #include "plist.h"
 
+// Constructor de nodo.
 pnode* newNode(int pid, char* name){
 	pnode* node =(pnode*) malloc(sizeof(pnode));
 	node->next = NULL;
@@ -19,6 +20,7 @@ pnode* newNode(int pid, char* name){
 	return node;
 }
 
+// Connstructor de lista.
 plist* newList(){
 	plist* list =(plist*) malloc(sizeof(plist));
 	list->first = NULL;
@@ -28,6 +30,7 @@ plist* newList(){
 	return list;
 }
 
+// Destructor de lista.
 void deleteList(plist* list){
 	if(list->first != NULL){
 		pnode* it = list->first;
@@ -43,6 +46,7 @@ void deleteList(plist* list){
 	}
 }
 
+// Funcion para buscar un proceso en la lista.
 pnode* find(int pid, plist* list){
 	if(list->first != NULL){
 		pnode* it = list->first; 
@@ -57,6 +61,7 @@ pnode* find(int pid, plist* list){
 		return NULL;
 }
 
+// Funcion para insertar un proceso en la lista.
 void insert(int pid, char* name, plist* list){
 	pnode* node = newNode(pid, name);
 	
@@ -102,6 +107,7 @@ void insert(int pid, char* name, plist* list){
 	
 }
 
+// Funcion para borrar un proceso de la lista.
 void erase(int pid, plist* list){
 
 	pnode* it;
@@ -132,13 +138,14 @@ void erase(int pid, plist* list){
 	 
 }
 
+// Funcion para establecer una alarma a un proceso activo en la lista.
 void setAlarm(int pid, plist* list, int sec){
 	pnode* it = find(pid, list);
 	if(it != NULL)
 		it->untilAlarm = sec;
 }
 
-
+// Demonio que recorre la lista matando procesos con alarma terminada.
 void alarmDaemon(plist* list){
 
 	if(list != NULL){
@@ -187,6 +194,7 @@ void alarmDaemon(plist* list){
 	alarm(1);
 }
 
+// Funcion para matar a todos los procesos.
 void killAll(plist* list){
 	if(list->first != NULL){
 		setColor(COLOR_BACK_RED);
@@ -209,12 +217,14 @@ void killAll(plist* list){
 	}
 }
 
+// Funcion para obtener la fecha de un proceso en formato humano.
 char* getDateStr(struct tm* tm){
 	char* tmp = malloc(17);
 	sprintf(tmp,"%d/%d/%d %d:%d:%d",tm->tm_mday,tm->tm_mon,tm->tm_year-100,(tm->tm_hour + 1) % 24,tm->tm_min,tm->tm_sec);
 	return tmp;
 }
 
+// Funcion que imprime los datos de un nodo.
 void printNode(pnode* node){
 	printf("%s\t", node->name);
 	char* date = getDateStr(node->initDate);
@@ -225,6 +235,7 @@ void printNode(pnode* node){
 	free(date);
 }
 
+// Funcion que imprime todos los nodos de la lista.
 void printList(plist* list){
 	
 	if(list->first != NULL){

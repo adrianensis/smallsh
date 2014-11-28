@@ -151,13 +151,15 @@ user_nueva_orden(char * orden)
 char *
 user_tabulador(char * parte, int numero, int numtab)
 {
-    /* Implementación */
-    // TODO ?
+	char* word = NULL;
+   	if((strlen(parte) > 0) && (numtab == 1)){
+   		free(word);
+   		word = NULL;
+   		word = autoComplete(dictionary, parte);	
+   	}else if((strlen(parte) > 0) && (numtab == 2))
+   		predict(dictionary, parte);
 
-   	if((strlen(parte) > 0) && (numtab == 2))
-   		autoComplete(dictionary, parte);
-
-    return NULL;
+    return word;
 }
 
 /* $Id: userfn.c 1399 2007-12-20 09:45:07Z pedroe $ */
