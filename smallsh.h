@@ -42,6 +42,9 @@
 #define NAMEDPIPE 2
 #define UNNAMEDPIPE 3
 
+/*Nueva macro para gestion de errores*/
+#define EXIT_ERROR -2
+
 /*Nuevas Variables globales*/
 char* currentDirectory;
 char* initDirectory;

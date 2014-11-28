@@ -3,38 +3,41 @@
 /* Abre una tuberia en modo solo lectura y sustituye la salida
  * estandar por la tuberia recien abierta
  */
-void openWritePipe(char * nombre_pipe){
+int openWritePipe(char * nombre_pipe){
     /* Abre la tuberia en modo solo escritura */
     int fd = open (nombre_pipe, O_WRONLY);
 
     /* Comprueba si se produce algun error */
     if (fd == -1){
         perror ("pipe_open_write");
-        exit(EXIT_FAILURE); // Esta constante esta definida en stdio, y se usa por
+        return(EXIT_ERROR); // Esta constante esta definida en stdio, y se usa por
                             // portabilidad, es igual a poner un 1-
     }
     close(1);   /*Cierra salida estandar actual*/
     dup(fd);
     close(fd);
+
+    return 0;
 }
 
 /* Sustituye la entrada estandar por una tuberia de lectura */
-void openReadPipe(int fdR){
+int openReadPipe(int fdR){
     // Abrimos tuberia para lectura
     if (fdR == -1){
         perror ("pipe_open_read");
-        exit(EXIT_FAILURE);
+        return(EXIT_ERROR);
     }
     close(0);   /*Cierra entrada estandar actual*/
     dup(fdR);
     close(fdR);
 
+    return 0;
 }
 
 /* Crea un fichero de tipo fifo para las tuberias con nombre con el
  * formato: fifo-sh-PID_DEL_PROCESO, dentro del directorio /tmp
  */
-void createNamedPipe(char * nombre_pipe, int pid){
+int createNamedPipe(char * nombre_pipe, int pid){
     /*Forma el nombre de la tuberia*/
     sprintf(nombre_pipe, "/tmp/fifo-sh-%i", pid);
 
@@ -44,8 +47,10 @@ void createNamedPipe(char * nombre_pipe, int pid){
     // Creacion de la tuberia de comunicacion con permisos rw-rw-rw
     if ((mkfifo(nombre_pipe, 006666) == -1) && (errno != EEXIST)){
         perror("Error al crear fifo");
-        exit(EXIT_FAILURE);
+        return(EXIT_ERROR);
     }
+
+    return 0;
 }
 
 /* Recibe como parametros:
@@ -92,12 +97,12 @@ int getReadFd(int fd[], int typepipe, char * nombre_pipe){
 /* Limpia todas las tuberias con nombre creadas durante la ejecucion
  * de un conjunto de ordenes concatenadas por tuberias
  */
-void cleanNamedPipes(){
+int cleanNamedPipes(){
     DIR *dir = opendir("/tmp"); //obtenemos el descriptor de directorio
 
     if(dir == NULL){
         perror("Error al abrir el directorio tmp");
-        exit(EXIT_FAILURE);
+        return(EXIT_ERROR);
     }
 
     errno = 0;      // se establece a 0, por si hubiese modificado anteriormente
@@ -118,13 +123,15 @@ void cleanNamedPipes(){
         }
     }
 
-    if (errno) { // se añade porque tiene un tratamiento distinto al manejo de errores de antes
+    if (errno) {
         perror("Error al limpiar pipes del directorio temporal");
-        exit(EXIT_FAILURE);
+        return(EXIT_ERROR);
     }
 
     if(closedir(dir) == -1){
         perror("Error al cerrar directorio tmp");
-        exit(EXIT_FAILURE);
+        return(EXIT_ERROR);
     }
+
+    return 0;
 }
