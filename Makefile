@@ -18,8 +18,6 @@ strlist.o: strlist.c
 sortedArrayMap.o: sortedArrayMap.c
 otherwc.o: otherwc.c
 managePipe.o: managePipe.c
-
-
 plist.o: plist.c
 
 gettok.o: gettok.c

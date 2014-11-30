@@ -23,6 +23,7 @@
 #include "color.h"
 #include "plist.h"
 #include "findbysize.h"
+#include "fileutil.h"
 #include "otherwc.h"
 #include "trietree.h"
 #include "strlist.h"

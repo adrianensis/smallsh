@@ -1,6 +1,4 @@
-#include "findbysize.h"
-#include "fileutil.h"
-#include "color.h"
+#include "smallsh.h"
 
 int level = 0; // Nivel de profundiad.
 
@@ -28,32 +26,9 @@ int sizeOK(int max, int min, char* name){
 	return retValue;
 }
 
-// Funcion que imprime un numero de tabulados proporcional al nivel de profundidad.
-// Sirve para hacer mas grafica la jerarquia de directorios.
-void printTabs(int lvl){
-	int i;
-	for(i=0;i<lvl;i++)
-		printf("\t");
-}
-
-#define R 0 // regular
-#define D 1 // directorio
-
-// Funcion que imprime una linea con diferente formato segun sea del tipo D (directorio) o R(regular).
-void printLine(char* name, int type){
-	printTabs(level);
-	if(type==R){
-		printf("\t");
-		setColor(COLOR_BACK_GREEN);
-		printf("%s", name);
-	}else if(type==D){
-		setColor(COLOR_BACK_YELLOW);
-		printf("%s", name);
-	}
-	setColor(COLOR_RESET);
-	printf("\n");
-}
-
+#define R 0
+#define D 1
+ 
 // Funcion que devuelve si la entrada es un fichero reg o un dir
 int processEntry(char* name){
 
@@ -71,7 +46,7 @@ int processEntry(char* name){
 
 // Funcion recursiva que imprime toda la jerarquia de directorios a partir de un directorio raiz dado.
 // Solo muestra los ficheros que se ajustan a los tamaños especificados.
-void deepFind(int max, int min, char* dirname){
+void deepFind(int max, int min, char* path, char* dirname){
 
 	// Guardamos el directorio actual.
 	char* auxDir = malloc(128);
@@ -81,13 +56,19 @@ void deepFind(int max, int min, char* dirname){
 	si hay mas directorios:
 	para cada subdir hacer deepFind(subdir)*/
 	
-	printLine(dirname,D);
-	
 	DIR* dir = opendir(dirname);
 	if(dir == NULL){
 		perror("Fallo al abrir el directorio.\n");
 	}else{
+		
+		// La primera vez se le asigna el directorio actual a la variable path.
+		if(path == NULL){
+			printf("%s\n", dirname);
+			path = malloc(256);
+			sprintf(path, "%s", dirname);
+		}
 	
+		// Nos movemos al directorio.
 		chdir(dirname);
 	
 		struct dirent *entry;
@@ -99,10 +80,25 @@ void deepFind(int max, int min, char* dirname){
 		while((entry = readdir(dir)) != NULL){	
 			type = processEntry(entry->d_name);
 			if((type != -1) && (type==R) && sizeOK(max, min, entry->d_name))
-				printLine(entry->d_name,R);
+				printf("%s/%s\n", path, entry->d_name);
+				
 			else if((type != -1) && (type==D) &&(strcmp(entry->d_name, ".") != 0) && (strcmp(entry->d_name, "..") != 0)){
+			
 				level++;
-				deepFind(max,min,entry->d_name);
+				printf("%s/%s\n", path, entry->d_name);
+				
+				// Guardamos el path.
+				char* aux = malloc(256);
+				sprintf(aux,"%s", path);
+				
+				// Concatenamos el directorio al path y seguimos buscando dentro.
+				sprintf(path, "%s/%s", path, entry->d_name);
+				deepFind(max,min,path,entry->d_name);
+				
+				// Restauramos el path.
+				sprintf(path,"%s", aux);
+				free(aux);
+				
 				level--;
 			}
 		}
@@ -134,8 +130,18 @@ void findbysize(char** cline){
 	*/
 	
 	int param = 3; // empiezan en el tercer parametro.
+	
+	// Si no hay directorios se toma el actual por defecto.
+	if(cline[param] == NULL){
+		char* path = NULL;
+		deepFind(max, min, path, "."); // Para cada dir hacer una busqueda en profundidad.
+		free(path);	
+	}
+		
 	while(cline[param] != NULL){
-		deepFind(max, min, strdup(cline[param])); // Para cada dir hacer una busqueda en profundidad.
+		char* path = NULL;
+		deepFind(max, min, path, cline[param]); // Para cada dir hacer una busqueda en profundidad.
+		free(path);
 		param++;
 	}
 
