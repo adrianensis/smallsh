@@ -39,10 +39,17 @@ procline(struct TokBuf * tb) {
 
                         if (narg != 0) {
                                 arg[narg] = NULL; /*El ultimo se establece NULL*/
-                                if(readOutput > 0){
+                                if(readOutput > 0 && fdR != EXIT_ERROR){
                                     posInPipe = -1;
                                     fdR = runcommandPipe(arg, where, typepipe, posInPipe, fdR);
-                                    cleanNamedPipes();
+
+                                    if(fdR == EXIT_ERROR){
+                                        perror("Error al intentar concatenar órdenes");
+                                    }
+
+                                    if(cleanNamedPipes() == EXIT_ERROR){
+                                        perror("Error al intentar limpiar directorio temporal");
+                                    }
                                 }else if(isInternal(arg[0])){
                                         runinternal(arg); // nuevo
                                 }else{
@@ -64,6 +71,10 @@ procline(struct TokBuf * tb) {
                         if (narg != 0) {
                                 arg[narg] = NULL; /*El ultimo se establece NULL*/
                                 fdR = runcommandPipe(arg, where, typepipe, posInPipe, fdR);
+                                if(fdR == EXIT_ERROR){
+                                    perror("Error al intentar concatenar órdenes");
+                                    break;
+                                }
                                 posInPipe = 1; // es un comando de los que leen y escriben
                                 readOutput = 1; /*Establece que el siguiente debe leer la tuberia*/
                         }

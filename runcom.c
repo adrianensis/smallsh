@@ -13,7 +13,7 @@ runcommand(char **cline, int where) {
 
         if ((pid = fork()) < 0) {
                 perror("Error al realizar fork");
-                exit(EXIT_FAILURE);
+                return(EXIT_ERROR);
         }
 
         if (pid == 0) {                   /* Estamos en el hijo. */
@@ -72,7 +72,7 @@ int runcommandPipe(char **cline, int where, int typepipe, int posInPipe, int fdR
         if(typepipe == UNNAMEDPIPE && posInPipe != -1){
             if(pipe(fd) == -1 ){
                 perror("Error al intentar crear pipe");
-                exit(EXIT_FAILURE);
+                return(EXIT_ERROR);
             }
         }
 
@@ -80,12 +80,14 @@ int runcommandPipe(char **cline, int where, int typepipe, int posInPipe, int fdR
         if ((pid = fork()) < 0) {
 
                 perror("Error al realizar fork");
-                exit(EXIT_FAILURE);
+                return(EXIT_ERROR);
 
         } else if(pid > 0){ /* PADRE - crea la tuberia si es con nombre */
 
                 if(typepipe == NAMEDPIPE){
-                    createNamedPipe(nombre_pipe, pid);
+                    if(createNamedPipe(nombre_pipe, pid) == EXIT_ERROR){
+                        return(EXIT_ERROR); //Propaga el error
+                    }
                 }
 
                 /* Estamos en el padre. Si la orden se ejecuta en segundo plano, no
@@ -113,7 +115,9 @@ int runcommandPipe(char **cline, int where, int typepipe, int posInPipe, int fdR
                 signal(SIGQUIT,SIG_DFL);
 
                 /* Modifica la tabla de descriptores segun posicion del comando a ejecutar y tipo de tuberia*/
-                gestionaPipes(posInPipe, typepipe, fd, nombre_pipe, fdR);
+                if( gestionaPipes(posInPipe, typepipe, fd, nombre_pipe, fdR) == EXIT_ERROR ){
+                    return(EXIT_ERROR); //Propaga el error
+                }
 
                 // Ejecución
                 execvp(*cline, cline);    /* Ejecutamos la orden. */

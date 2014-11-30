@@ -92,18 +92,13 @@ int getWord(char buf[], int offset, int sizeBuffer){
 	  return (i != sizeBuffer-1) ? i : -1;
 }
 
-void countFile(char *file, int lflag, int wflag, int cflag){
+int countFile(char *file, int lflag, int wflag, int cflag){
   // abre el fichero
   int fd = open (file, O_RDONLY );
 
   if (fd == -1){
     perror ("Error al abrir fichero para lectura");
-        /* Restaurar el modo de la entrada */
-        modoInterpretado(0, 1);
-
-        /* Finalmente, a la función de finalización */
-        user_finalizar();
-    exit(EXIT_FAILURE);
+    return(EXIT_FAILURE);
   }
 
   // se obtiene su estado
@@ -120,7 +115,7 @@ void countFile(char *file, int lflag, int wflag, int cflag){
   // Se cierra el fichero
   if (close(fd) == -1){
     perror("Error al cerrar fichero de lectura");
-    exit(EXIT_FAILURE);
+    return(EXIT_FAILURE);
   }
 
   charCounter = 0;
@@ -138,15 +133,16 @@ void countFile(char *file, int lflag, int wflag, int cflag){
 
   showOutputWc(file, lflag, wflag, cflag);
 
-}
-// SE LE PUEDE CAMBIAR EL NOMBRE, ES POR PONER ALGO.
-void otherwc(char **cline){
+  return 0;
 
+}
+
+int otherwc(char **cline){
   // Se inician los contadores totales a 0
   // Solo se muestran si hay mas de un fichero como parametro
   totalCharCounter = totalLineCounter = totalWordCounter = 0;
 
-  int totalFlag = -1;
+  int numFile = 0;
   int i = 1;
   int j = 1;
 
@@ -155,12 +151,12 @@ void otherwc(char **cline){
   lflag = wflag = cflag = 0;
 
   // Se reconocen todos los flags de opciones
-  while(cline[i][0] == '-'){
+  while(cline[i] != NULL && cline[i][0] == '-'){
     switch(cline[i][j]){
       case 'l': lflag = 1; break;
       case 'w': wflag = 1; break;
       case 'c': cflag = 1; break;
-      default : printf ("Uso: wc [-cwl] FILE [FILE ... ]  --> %c\n", cline[i][j]); break;
+      default : printf ("Uso: otherwc [-cwl] FILE [FILE ... ]  --> %c\n", cline[i][j]); break;
     }
 
     // avanza al siguiente caracter de una opcion para las del tipo (-lw)
@@ -173,41 +169,44 @@ void otherwc(char **cline){
     }
   }
 
+  // Si no hay fichero se informa del uso
+  if(cline[i] == NULL){
+    printf ("Falta fichero.\nUso: otherwc [-cwl] FILE [FILE ... ] \n");
+    return 0;
+  }
+
   // se empiezan a tratar los ficheros
   while( cline[i] != NULL){
 
-      // se abre el fichero
-      int fd = open (cline[i], O_RDONLY );
-
-      if (fd == -1){
+      // Comprueba si existe el fichero
+      if( access( cline[i], F_OK ) == -1 ) {
         char outputError[100];
         sprintf(outputError, "%s: %s: No existe el fichero\n", cline[0], cline[i]);
         perror (outputError);
-        exit(EXIT_FAILURE);
+        return(EXIT_FAILURE);
       }
 
-      countFile(cline[i], lflag, wflag, cflag);
-      totalFlag++;
+      if( countFile(cline[i], lflag, wflag, cflag) == EXIT_FAILURE){
+        return EXIT_FAILURE; // Propaga error
+      }
+
+      numFile++;
+
       i++;
-
-      // cierra fichero
-      if (close(fd) == -1){
-        perror("read");
-        exit(EXIT_FAILURE);
-      }
 
   }
 
   // Si no se le pasa fichero como parametro se muestra la forma de hacerlo
   if(i < 2){
 
-    printf ("Uso: wc [-cwl] FILE [FILE ... ]\n");
-   // exit(EXIT_FAILURE); TODO - Cuando sale con fallo, no debe salir de la aplicacion,
-  // ademas cuando sale toca algo que hace que la terminal normal del sistema (fuera de smallsh)
-  // no funcione bien
+    printf ("Uso: otherwc [-cwl] FILE [FILE ... ]\n");
+    return(EXIT_FAILURE);
 
-  }else if(i > 2){
+  }else if(numFile > 1){
     // Solo cuando hay mas de dos ficheros se muestra el total
     showOutputWc("total", lflag, wflag, cflag);
   }
+
+
+  return 0;
 }

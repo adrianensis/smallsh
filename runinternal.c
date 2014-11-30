@@ -1,6 +1,7 @@
 #include "smallsh.h"
 
 #define INITIAL_SIZE 7
+#define MAX_LONG 120
 
 // Estructura de datos que contiene todas las ordenes internas
 
@@ -14,6 +15,8 @@ int isInternal(char* command){
 }
 
 int runinternal(char **cline) {
+
+     int error = 0;
 
      if((strcmp(cline[0],"cd") == 0)){
      	if(cline[1] != 0){
@@ -50,9 +53,15 @@ int runinternal(char **cline) {
     }else if((strcmp(cline[0],"alarma") == 0) && (cline[1] != NULL) && (cline[2] != NULL)){
     		setAlarm(atoi(cline[1]), procList, atoi(cline[2]));
     }else if(strcmp(cline[0],"otherwc") == 0){		// si el segundo parametro no existe entonces se llama a otherwc sin opciones
-        otherwc(cline);
+            error = otherwc(cline);
     }else if((strcmp(cline[0],"findbysize") == 0) && (cline[1] != NULL) && (cline[2] != NULL)){
 		    findbysize(cline);
+    }
+
+    if(error == EXIT_FAILURE){
+        char outputError[MAX_LONG];
+        sprintf(outputError, "Error al intentar ejecutar el comando: %s\n", cline[0]);
+        perror (outputError);
     }
 
      return 0;
