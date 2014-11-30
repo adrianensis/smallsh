@@ -13,27 +13,6 @@ int isInternal(char* command){
 	|| strcmp(command,"findbysize")== 0);
 }
 
-
-// PROPUESTA PARA MODULAR CÓDIGO, YA QUE PARA FUNCIONES ANTERIORES NO SE NOTABA
-// PERO PARA HACER WC, HACE FALTA METER BASTANTE CODIGO:
-// PODRIAMOS HACER QUE EL ISINTERNAL DEVUELVA UN VALOR ENTRE 1 Y EL TOTAL DE INSTRUCCIONES QUE TENEMOS
-// DE MANERA QUE SE LLAME AL RUNINTERNAL CON ESE VALOR, Y ENTONCES TENGAMOS UN ARRAY EN EL RUNINTERAL
-// DONDE EN CADA POSICION SE DEVUELVA UN STRING CON LA FUNCION A LA QUE HAY QUE LLAMAR O UN PUNTERO A FUNCION
-// DE ESTA MANERA PODEMOS TENER UNA CLASE PARA CADA INSTRUCCION, CON LAS FUNCIONES AUXILIARES QUE NECESITE
-// CADA FUNCION.
-
-// ENTIENDO LO QUE DICES PERO CREO QUE LO DE LOS PUNTEROS A FUNCIONES SE IBA A COMPLICAR MUCHO,
-// YO AL MENOS NO SE MANEJAR AUN BIEN LOS PUNTEROS A FUNCIONES, EN C SON SUPER RAROS.
-// LO QUE SI PODEMOS HACER DE MOMENTO ES UNA FUNCION PARA WC, LA DECLARAMOS FUERA DE RUNINTERNAL
-// Y ESO YA ACLARA BASTANTE EL CODIGO. PARA EXIT Y BGPROC TAMBIEN SE HA HECHO (las funciones que se usan estan
-// declaradas en los ficheros plist.c y plist.h)
-// ↓↓↓↓↓PODEMOS DECLARARLA AQUI MISMO↓↓↓↓↓
-
-
-//TODO discutir si es mejor usar los flags locales e ir pasandolos como parametros o bien
-// hacerlos variables globales.
-
-
 int runinternal(char **cline) {
 
      if((strcmp(cline[0],"cd") == 0)){
@@ -46,6 +25,12 @@ int runinternal(char **cline) {
 			dictionary = newTrieTree();
 			loadTrieTree(dictionary, "/usr/bin");
 			loadTrieTree(dictionary, currentDirectory);
+			addStr(dictionary, "cd");
+			addStr(dictionary, "exit");
+			addStr(dictionary, "bgproc");
+			addStr(dictionary, "alarma");
+			addStr(dictionary, "otherwc");
+			addStr(dictionary, "findbysize");
 
      	}else{
      		chdir(initDirectory);

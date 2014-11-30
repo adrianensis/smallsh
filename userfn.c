@@ -17,6 +17,12 @@ user_inicializar(void)
 	dictionary = newTrieTree(); // inicializamos el diccionario de comandos.
 	loadTrieTree(dictionary, "/usr/bin");
 	loadTrieTree(dictionary, currentDirectory);
+	addStr(dictionary, "cd");
+	addStr(dictionary, "exit");
+	addStr(dictionary, "bgproc");
+	addStr(dictionary, "alarma");
+	addStr(dictionary, "otherwc");
+	addStr(dictionary, "findbysize");
 
 	cmdHistory = newStrList(); // inicializamos la lista historial de comandos.
 }
