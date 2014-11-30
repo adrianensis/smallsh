@@ -40,8 +40,6 @@ void showOutputWc(char *file, int lflag, int wflag, int cflag){
 
 }
 
-// TODO cada vez que se ejecuta un exit(1) o exit(EXIT_FAILURE) se producen errores en la terminal del sitema
-// fuera de smallsh pero eso no es fallo nuestro
 void countChar(char c){
   charCounter++;
   if((c) == '\n'){

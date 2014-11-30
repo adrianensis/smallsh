@@ -1,7 +1,5 @@
 #include "smallsh.h"
 
-int level = 0; // Nivel de profundiad.
-
 // Funcion para saber si el fichero se encuentra entre los tamaños min y max.
 int sizeOK(int max, int min, char* name){
 
@@ -50,10 +48,6 @@ int deepFind(int max, int min, char* path, char* dirname){
 
 	int retValue = 0;
 
-	// Guardamos el directorio actual.
-	char* auxDir = malloc(128);
-	getcwd (auxDir, 128);
-
 	/*analizar que hay en dir y mostrar ficheros reg aptos,
 	si hay mas directorios:
 	para cada subdir hacer deepFind(subdir)*/
@@ -63,6 +57,11 @@ int deepFind(int max, int min, char* path, char* dirname){
 		retValue = EXIT_FAILURE;
 		perror("Fallo al abrir el directorio.\n");
 	}else{
+	
+		
+		// Guardamos el directorio actual.
+		char* auxDir = malloc(128);
+		getcwd (auxDir, 128);
 		
 		// La primera vez se le asigna el directorio actual a la variable path.
 		if(path == NULL){
@@ -88,7 +87,6 @@ int deepFind(int max, int min, char* path, char* dirname){
 				
 			else if((type != -1) && (type==D) &&(strcmp(entry->d_name, ".") != 0) && (strcmp(entry->d_name, "..") != 0)){
 			
-				level++;
 				printf("%s/%s\n", path, entry->d_name);
 				
 				// Guardamos el path.
@@ -103,7 +101,6 @@ int deepFind(int max, int min, char* path, char* dirname){
 				sprintf(path,"%s", aux);
 				free(aux);
 				
-				level--;
 			}else if(type == -1)
 				retValue = EXIT_FAILURE;
 		}

@@ -79,7 +79,6 @@ void insert(int pid, char* name, plist* list){
 			it = it->next; // avanzar 
 		}	
 		
-		// TODO controlar si ya existe?
 		/*Insert*/
 		if(it->pid > pid){
 			if(it->prev == NULL){ // si es el primero
@@ -152,7 +151,7 @@ void alarmDaemon(plist* list){
 	
 		/*Buffer para almacenar los procesos terminados*/
 		int i = 0;
-		int n = 12; // capacidad del buffer
+		int n = 32; // capacidad del buffer
 		int buffer[n];
 
 		time_t t;

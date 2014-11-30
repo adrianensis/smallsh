@@ -5,7 +5,7 @@ user_inicializar(void)
 {
     currentDirectory = malloc(128);
     initDirectory = malloc(128);
-    getcwd (initDirectory, 128); // TODO 128 o otro?
+    getcwd (initDirectory, 128);
     strcpy(currentDirectory, initDirectory); // El actual es el inicial.
 
     promptStr = NULL;

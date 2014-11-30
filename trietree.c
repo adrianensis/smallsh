@@ -106,14 +106,6 @@ void printTreeAux(trieNode* head, char* str, int index){
 	}
 }
 
-// Funcion para imprimir el arbol completo.
-void printTree(trieTree* tree){
-	char* str = malloc(32); // No hay comandos tan largos.
-	memset(str,0,32);
-	printTreeAux(tree->head, str, 0);
-	free(str);
-}
-
 // Funcion auxiliar para imprimir predicciones dada una subcadena.
 void predictAux(trieNode* node, char* str, int index){
 
