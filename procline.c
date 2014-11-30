@@ -15,6 +15,7 @@ procline(struct TokBuf * tb) {
     int ntoken;        /* Tokens procesados */
 
     int typepipe = 0;
+    int cleanPipe = 0; /* Por defecto no se limpian las tuberias creadas al finalizar la ejecucion */
     int posInPipe = 0;  /*              command1 % command2 % ... % commandN    */
                         /* posInPipe =     0           1                -1      */
     int readOutput = 0;
@@ -47,7 +48,7 @@ procline(struct TokBuf * tb) {
                                         perror("Error al intentar concatenar órdenes");
                                     }
 
-                                    if(cleanNamedPipes() == EXIT_ERROR){
+                                    if(cleanPipe && cleanNamedPipes() == EXIT_ERROR){
                                         perror("Error al intentar limpiar directorio temporal");
                                     }
                                 }else if(isInternal(arg[0])){
@@ -66,8 +67,6 @@ procline(struct TokBuf * tb) {
                 case PIPE:
                         typepipe = (toktype == PORCIENTO) ? NAMEDPIPE : UNNAMEDPIPE;
 
-                       // where = (toktype == AMPERSAND) ? BACKGROUND :
-                        //    FOREGROUND;
                         if (narg != 0) {
                                 arg[narg] = NULL; /*El ultimo se establece NULL*/
                                 fdR = runcommandPipe(arg, where, typepipe, posInPipe, fdR);
@@ -78,6 +77,12 @@ procline(struct TokBuf * tb) {
                                 posInPipe = 1; // es un comando de los que leen y escriben
                                 readOutput = 1; /*Establece que el siguiente debe leer la tuberia*/
                         }
+
+                        /*Si se ha ejecutado alguna tuberia con nombre al final de la ejecucion
+                          de la linea de ordenes completa se realizara una limpieza del directorio tmp */
+                        if(typepipe == NAMEDPIPE)
+                            cleanPipe = 1;
+
                         /* Seguir con la siguiente orden. Esto se da
                          * si se han introducido varias órdenes
                          * separadas por ';' o '&'. */

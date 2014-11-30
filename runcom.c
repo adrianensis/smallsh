@@ -102,7 +102,7 @@ int runcommandPipe(char **cline, int where, int typepipe, int posInPipe, int fdR
                         return(0);
                 }
 
-                if(posInPipe != -1){    /* No es el ultimo comando prepara el descriptor de lectura que retorna la funcion */
+                if(posInPipe != -1){    /* Si no es el ultimo comando prepara el descriptor de lectura que retorna la funcion */
                     fd_return = getReadFd(fd, typepipe, nombre_pipe);
                 } else { /* El padre espera al ultimo proceso */
                     while ((ret = wait(&exitstat)) != pid && ret != -1);

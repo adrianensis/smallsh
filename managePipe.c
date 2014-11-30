@@ -22,7 +22,8 @@ int openWritePipe(char * nombre_pipe){
 
 /* Sustituye la entrada estandar por una tuberia de lectura */
 int openReadPipe(int fdR){
-    // Abrimos tuberia para lectura
+    // Comprueba si la apertura de la tuberia se realizo de forma incorrecta
+    // por parte del proceso que la pas
     if (fdR == -1){
         perror ("pipe_open_read");
         return(EXIT_ERROR);
@@ -94,8 +95,7 @@ int getReadFd(int fd[], int typepipe, char * nombre_pipe){
 }
 
 
-/* Limpia todas las tuberias con nombre creadas durante la ejecucion
- * de un conjunto de ordenes concatenadas por tuberias
+/*
  */
 int cleanNamedPipes(){
     DIR *dir = opendir("/tmp"); //obtenemos el descriptor de directorio
