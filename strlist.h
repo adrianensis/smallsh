@@ -34,5 +34,6 @@ char* getCurrent(strlist* list);
 char* nextStr(strlist* list);
 char* prevStr(strlist* list);
 void resetCurrent(strlist* list);
+void printHistory(strlist* list);
 
 #endif

@@ -92,3 +92,17 @@ char* prevStr(strlist* list){
 void resetCurrent(strlist* list){
 	list->selected = list->first;
 }
+
+// Imprime todos los comandos de la lista indexados numéricamente.
+void printHistory(strlist* list){
+	
+	int counter = 0;
+	strnode* it = list->first;
+	
+	while(it->next != NULL){
+		printf("%d %s\n", counter+1, it->str);
+		it = it->next;
+		counter++;
+	}
+		
+}

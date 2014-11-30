@@ -23,6 +23,7 @@ user_inicializar(void)
 	addStr(dictionary, "alarma");
 	addStr(dictionary, "otherwc");
 	addStr(dictionary, "findbysize");
+	addStr(dictionary, "history");
 
 	cmdHistory = newStrList(); // inicializamos la lista historial de comandos.
 }

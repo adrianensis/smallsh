@@ -11,7 +11,8 @@ int isInternal(char* command){
 	|| strcmp(command,"bgproc") == 0
 	|| strcmp(command,"alarma") == 0
 	|| strcmp(command,"otherwc")== 0
-	|| strcmp(command,"findbysize")== 0);
+	|| strcmp(command,"findbysize")== 0
+	|| strcmp(command,"history")== 0);
 }
 
 int runinternal(char **cline) {
@@ -34,6 +35,7 @@ int runinternal(char **cline) {
 			addStr(dictionary, "alarma");
 			addStr(dictionary, "otherwc");
 			addStr(dictionary, "findbysize");
+			addStr(dictionary, "history");
 
      	}else{
      		chdir(initDirectory);
@@ -56,6 +58,9 @@ int runinternal(char **cline) {
             error = otherwc(cline);
     }else if((strcmp(cline[0],"findbysize") == 0) && (cline[1] != NULL) && (cline[2] != NULL)){
 		    findbysize(cline);
+    }else if(strcmp(cline[0],"history") == 0){
+    	if(cline[1] == NULL)
+    		printHistory(cmdHistory);
     }
 
     if(error == EXIT_FAILURE){
