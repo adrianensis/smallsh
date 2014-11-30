@@ -29,5 +29,6 @@ void printTree(trieTree* tree);
 void predict(trieTree* tree, char* str); // imprime las posibles palabras candidatas para completar str.
 char* autoComplete(trieTree* tree, char* str);
 void loadTrieTree(trieTree* tree, char* dirPath); // Se cargaran en el arbol el nombre de todos los ejecutables existentes en el directorio.
+trieTree* resetTrieTree(char* currentDir);
 
 #endif

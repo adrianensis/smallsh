@@ -25,17 +25,8 @@ int runinternal(char **cline) {
      		getcwd (currentDirectory, 128);
 
      		// Recargamos diccionario.
-			deleteTrieTree(dictionary);
-			dictionary = newTrieTree();
-			loadTrieTree(dictionary, "/usr/bin");
-			loadTrieTree(dictionary, currentDirectory);
-			addStr(dictionary, "cd");
-			addStr(dictionary, "exit");
-			addStr(dictionary, "bgproc");
-			addStr(dictionary, "alarma");
-			addStr(dictionary, "otherwc");
-			addStr(dictionary, "findbysize");
-			addStr(dictionary, "history");
+     		deleteTrieTree(dictionary);
+			dictionary = resetTrieTree(currentDirectory);
 
      	}else{
      		chdir(initDirectory);
@@ -57,7 +48,7 @@ int runinternal(char **cline) {
     }else if(strcmp(cline[0],"otherwc") == 0){		// si el segundo parametro no existe entonces se llama a otherwc sin opciones
             error = otherwc(cline);
     }else if((strcmp(cline[0],"findbysize") == 0) && (cline[1] != NULL) && (cline[2] != NULL)){
-		    findbysize(cline);
+		    error = findbysize(cline);
     }else if(strcmp(cline[0],"history") == 0){
     	if(cline[1] == NULL)
     		printHistory(cmdHistory);

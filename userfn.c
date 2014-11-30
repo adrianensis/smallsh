@@ -14,17 +14,12 @@ user_inicializar(void)
 
 	procList = newList(); // inicializamos la lista de procesos.
 
-	dictionary = newTrieTree(); // inicializamos el diccionario de comandos.
-	loadTrieTree(dictionary, "/usr/bin");
-	loadTrieTree(dictionary, currentDirectory);
-	addStr(dictionary, "cd");
-	addStr(dictionary, "exit");
-	addStr(dictionary, "bgproc");
-	addStr(dictionary, "alarma");
-	addStr(dictionary, "otherwc");
-	addStr(dictionary, "findbysize");
-	addStr(dictionary, "history");
-
+	// inicializamos el diccionario de palabras.
+	dictionary = resetTrieTree(currentDirectory);
+	
+	if(dictionary == NULL)
+		printf("nulo\n");
+	
 	cmdHistory = newStrList(); // inicializamos la lista historial de comandos.
 }
 

@@ -193,13 +193,12 @@ void predict(trieTree* tree, char* str){
 		  gettoken.o
 */
 
-char* autoCompleteAux(trieNode* node, char* str, int index){
+char* autoCompleteAux(trieNode* node){
 
 	int i=0;
 	char* part = NULL;
 	char c;
 	trieNode* son;
-	for(c=' '; c<'z'+1 && (str[index] != c) ; c++); // Solo recorremos hasta 
 	
 	while(node->numSons == 1){
 	
@@ -236,7 +235,7 @@ char* autoComplete(trieTree* tree, char* str){
 			}
 	
 			if(index == len){
-				part = autoCompleteAux(it, str, len-1);
+				part = autoCompleteAux(it);
 			}
 		}	
 	}
@@ -279,4 +278,21 @@ void loadTrieTree(trieTree* tree, char* dirPath){
 		chdir(auxDir);
 		free(auxDir);
 	}
+}
+
+// Resetea el arbol con los valores por defecto y carga el directorio actual.
+trieTree* resetTrieTree(char* currentDir){
+
+	trieTree *tree = newTrieTree(); // inicializamos el diccionario de comandos.
+	loadTrieTree(tree, "/usr/bin");
+	loadTrieTree(tree, currentDir);
+	addStr(tree, "cd");
+	addStr(tree, "exit");
+	addStr(tree, "bgproc");
+	addStr(tree, "alarma");
+	addStr(tree, "otherwc");
+	addStr(tree, "findbysize");
+	addStr(tree, "history");
+	
+	return tree;
 }

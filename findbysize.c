@@ -46,7 +46,9 @@ int processEntry(char* name){
 
 // Funcion recursiva que imprime toda la jerarquia de directorios a partir de un directorio raiz dado.
 // Solo muestra los ficheros que se ajustan a los tamaños especificados.
-void deepFind(int max, int min, char* path, char* dirname){
+int deepFind(int max, int min, char* path, char* dirname){
+
+	int retValue = 0;
 
 	// Guardamos el directorio actual.
 	char* auxDir = malloc(128);
@@ -58,6 +60,7 @@ void deepFind(int max, int min, char* path, char* dirname){
 	
 	DIR* dir = opendir(dirname);
 	if(dir == NULL){
+		retValue = EXIT_FAILURE;
 		perror("Fallo al abrir el directorio.\n");
 	}else{
 		
@@ -79,6 +82,7 @@ void deepFind(int max, int min, char* path, char* dirname){
 		int type;
 		while((entry = readdir(dir)) != NULL){	
 			type = processEntry(entry->d_name);
+		
 			if((type != -1) && (type==R) && sizeOK(max, min, entry->d_name))
 				printf("%s/%s\n", path, entry->d_name);
 				
@@ -100,26 +104,33 @@ void deepFind(int max, int min, char* path, char* dirname){
 				free(aux);
 				
 				level--;
-			}
+			}else if(type == -1)
+				retValue = EXIT_FAILURE;
 		}
 		
 		if(errno){
 			printf("Fallo al leer el directorio.\n");
 			errno = 0;
+			retValue = EXIT_FAILURE;
 		}
 	
 		if(closedir(dir) == -1){
 			perror("Fallo al cerrar el directorio.\n");
+			retValue = EXIT_FAILURE;
 		}
 	
 		// Volvemos al directorio
 		chdir(auxDir);
 		free(auxDir);
 	}
+	
+	return retValue;
 }
 
 // Funcion que recibe un array los tamaños entre los que hay que buscar ficheros y
-void findbysize(char** cline){
+int findbysize(char** cline){
+
+	int retValue = 0;
 
 	int min = atoi(cline[1]);
 	int max = atoi(cline[2]);
@@ -134,15 +145,18 @@ void findbysize(char** cline){
 	// Si no hay directorios se toma el actual por defecto.
 	if(cline[param] == NULL){
 		char* path = NULL;
-		deepFind(max, min, path, "."); // Para cada dir hacer una busqueda en profundidad.
+		if(deepFind(max, min, path, ".") == EXIT_FAILURE) // Para cada dir hacer una busqueda en profundidad.
+			retValue = EXIT_FAILURE;
 		free(path);	
 	}
 		
 	while(cline[param] != NULL){
 		char* path = NULL;
-		deepFind(max, min, path, cline[param]); // Para cada dir hacer una busqueda en profundidad.
+		if(deepFind(max, min, path, cline[param]) == EXIT_FAILURE) // Para cada dir hacer una busqueda en profundidad.
+			retValue = EXIT_FAILURE;
 		free(path);
 		param++;
 	}
-
+	
+	return retValue;
 }
