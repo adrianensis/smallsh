@@ -64,7 +64,8 @@ int createNamedPipe(char * nombre_pipe, int pid){
 int gestionaPipes(int posInPipe, int typepipe, int fd[], char * nombre_pipe, int fdR){
 
     if(posInPipe != 0){     /*  si no es primer comando, lee de la pipe */
-        openReadPipe(fdR);  /*  La sustitucion de la entrada estandar
+        if(openReadPipe(fdR) == EXIT_ERROR)
+        	return EXIT_ERROR;  /*  La sustitucion de la entrada estandar
                                 por la tuberia de lectura
                                 es igual en los dos tipos de tuberias */
     }
@@ -72,7 +73,8 @@ int gestionaPipes(int posInPipe, int typepipe, int fd[], char * nombre_pipe, int
     if (posInPipe != -1){   /* si no es ultimo comando escribe en la pipe */
         if(typepipe == NAMEDPIPE){
             sprintf(nombre_pipe, "/tmp/fifo-sh-%i", getpid());
-            openWritePipe(nombre_pipe);
+           if(openWritePipe(nombre_pipe) == EXIT_ERROR)
+           		return EXIT_ERROR;
         }else{
             close(1);       /* Si es tuberia sin nombre no hay que crear nada, */
             dup(fd[1]);     /* se sustituye solamente la salida estandar por */
@@ -80,10 +82,13 @@ int gestionaPipes(int posInPipe, int typepipe, int fd[], char * nombre_pipe, int
         }
     }
     
-    return 0; // TODO poner errores.
+    return 0;
 
 }
 
+/*
+* Funcion para retornar el descriptor de fichero que debe leer el proceso siguiente como entrada.
+*/
 int getReadFd(int fd[], int typepipe, char * nombre_pipe){
     if(typepipe == NAMEDPIPE)
 
@@ -98,6 +103,7 @@ int getReadFd(int fd[], int typepipe, char * nombre_pipe){
 
 
 /*
+ * Limpia el directorio /tmp de los ficheros fifo creados.
  */
 int cleanNamedPipes(){
     DIR *dir = opendir("/tmp"); //obtenemos el descriptor de directorio

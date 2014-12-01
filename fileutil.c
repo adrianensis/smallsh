@@ -4,7 +4,7 @@
 struct stat getStat(int fileDesc){
 	struct stat buf;
 	if(fstat(fileDesc, &buf) == -1){
-		perror("Error al obtener las estadisticas del fichero.");
+		perror("Error al obtener las estadisticas del fichero");
 	}
 	
 	return buf;
@@ -19,7 +19,7 @@ int isDir(char* name){
 	int fd = open(name, O_RDONLY);
 	
 	if(fd==-1){
-		perror("Fallo al abrir el fichero.");
+		perror("Fallo al abrir el fichero");
 	}else{
 		struct stat buf = getStat(fd);
 		retValue = S_ISDIR(buf.st_mode);
@@ -42,7 +42,7 @@ int isReg(char* name){
 	int fd = open(name, O_RDONLY);
 	
 	if(fd==-1){
-		perror("Fallo al abrir el fichero.");
+		perror("Fallo al abrir el fichero");
 	}else{
 		struct stat buf = getStat(fd);
 		retValue = S_ISREG(buf.st_mode);
@@ -65,7 +65,7 @@ int isExe(char* name){
 	int fd = open(name, O_RDONLY);
 	
 	if(fd==-1){
-		perror("Fallo al abrir el fichero.");
+		perror("Fallo al abrir el fichero");
 	}else{
 		struct stat buf = getStat(fd);
 		retValue =  buf.st_mode & S_IXUSR;

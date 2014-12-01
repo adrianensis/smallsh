@@ -9,7 +9,7 @@ int sizeOK(int max, int min, char* name){
 	int fd = open(name, O_RDONLY);
 	
 	if(fd==-1){
-		perror("Fallo al abrir el fichero.");
+		perror("Fallo al abrir el fichero");
 	}else{
 		struct stat buf = getStat(fd);
 		retValue = ((max >= buf.st_size) && (buf.st_size >= min));
@@ -55,7 +55,7 @@ int deepFind(int max, int min, char* path, char* dirname){
 	DIR* dir = opendir(dirname);
 	if(dir == NULL){
 		retValue = EXIT_FAILURE;
-		perror("Fallo al abrir el directorio.\n");
+		perror("Fallo al abrir el directorio");
 	}else{
 	
 		
@@ -78,7 +78,7 @@ int deepFind(int max, int min, char* path, char* dirname){
 		// readdir devuelve NULL tanto si ha ido mal como si ha acabado de leer.
 		// Por eso el error se comprueba con errno.
 		errno = 0;
-		int type;
+		int type = 0;
 		while((entry = readdir(dir)) != NULL){	
 			type = processEntry(entry->d_name);
 		
@@ -106,13 +106,13 @@ int deepFind(int max, int min, char* path, char* dirname){
 		}
 		
 		if(errno){
-			printf("Fallo al leer el directorio.\n");
+			perror("Fallo al leer el directorio");
 			errno = 0;
 			retValue = EXIT_FAILURE;
 		}
 	
 		if(closedir(dir) == -1){
-			perror("Fallo al cerrar el directorio.\n");
+			perror("Fallo al cerrar el directorio");
 			retValue = EXIT_FAILURE;
 		}
 	
@@ -126,6 +126,11 @@ int deepFind(int max, int min, char* path, char* dirname){
 
 // Funcion que recibe un array los tamaños entre los que hay que buscar ficheros y
 int findbysize(char** cline){
+
+	if(cline[1] == NULL || cline[2] == NULL){
+		fprintf(stderr, "Falta indicar tamaños.\nUso: findbysize tammin tammax [lista-directorios] \n");
+		return EXIT_FAILURE;
+	}
 
 	int retValue = 0;
 

@@ -170,7 +170,7 @@ int otherwc(char **cline){
   // Si no hay fichero se informa del uso
   if(cline[i] == NULL){
     printf ("Falta fichero.\nUso: otherwc [-cwl] FILE [FILE ... ] \n");
-    return 0;
+    return EXIT_ERROR;
   }
 
   // se empiezan a tratar los ficheros
@@ -178,9 +178,7 @@ int otherwc(char **cline){
 
       // Comprueba si existe el fichero
       if( access( cline[i], F_OK ) == -1 ) {
-        char outputError[100];
-        sprintf(outputError, "%s: %s: No existe el fichero\n", cline[0], cline[i]);
-        perror (outputError);
+        fprintf(stderr ,"%s: %s: No existe el fichero\n", cline[0], cline[i]);
         return(EXIT_FAILURE);
       }
 

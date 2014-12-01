@@ -6,7 +6,7 @@ void deadSon(int nsig, siginfo_t* info, void* nothing){
 		int exitstat;
 		printf("\n");
 		setColor(COLOR_BACK_GREEN);
-		// %c, 164 imprime la "ñ"
+
 		printf("Proceso en segundo plano terminado, recibida signal %d:\n[%d] ha retornado:", SIGCHLD, info->si_pid);
 
 		/* Esperar al proceso hijo (obligatorio para que no quede Zombie) */
