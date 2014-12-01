@@ -24,6 +24,7 @@
 #include "plist.h"
 #include "findbysize.h"
 #include "fileutil.h"
+#include "managePipe.h"
 #include "otherwc.h"
 #include "trietree.h"
 #include "strlist.h"

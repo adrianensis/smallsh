@@ -1,4 +1,4 @@
-#include "plist.h"
+#include "smallsh.h"
 
 // Constructor de nodo.
 pnode* newNode(int pid, char* name){

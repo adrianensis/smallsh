@@ -1,9 +1,11 @@
-#include <stdlib.h>
+/*#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "fileutil.h"
 #include "trietree.h"
-#include "color.h"
+#include "color.h"*/
+
+#include "smallsh.h"
 
 // Constructor de nodo trie.
 trieNode* newTrieNode(){

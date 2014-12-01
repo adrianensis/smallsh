@@ -1,13 +1,6 @@
 #ifndef __PLIST_H
 #define __PLIST_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/signal.h>
-#include <string.h>
-#include <time.h>
-#include "color.h"
-
 // ESTRUCTURA PNODE (PROCESS NODE) QUE REPRESENTA UN PROCESO.
 typedef struct pnode{
 	/*Punteros a nodos hermanos*/

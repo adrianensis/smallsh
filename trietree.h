@@ -1,8 +1,6 @@
 #ifndef __TRIETREE_H
 #define __TRIETREE_H
 
-#include <stdlib.h>
-
 #define MAXALPHA 91
 #define LASTNODE 91
 

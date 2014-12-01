@@ -1,4 +1,4 @@
-#include "fileutil.h"
+#include "smallsh.h"
 
 // Funcion que devuelve las estadisticas de un fichero a partir de su descriptor.
 struct stat getStat(int fileDesc){

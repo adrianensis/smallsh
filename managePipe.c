@@ -61,7 +61,7 @@ int createNamedPipe(char * nombre_pipe, int pid){
  * nombre_pipe: array donde almacenar el nombre de la tuberia con nombre
  * fdR: descriptor de fichero donde leer la entrada en caso de no ser el primer comando de la tuberia.
  */
-void gestionaPipes(int posInPipe, int typepipe, int fd[], char * nombre_pipe, int fdR){
+int gestionaPipes(int posInPipe, int typepipe, int fd[], char * nombre_pipe, int fdR){
 
     if(posInPipe != 0){     /*  si no es primer comando, lee de la pipe */
         openReadPipe(fdR);  /*  La sustitucion de la entrada estandar
@@ -79,6 +79,8 @@ void gestionaPipes(int posInPipe, int typepipe, int fd[], char * nombre_pipe, in
             close(fd[1]);   /* la tuberia de escritura*/
         }
     }
+    
+    return 0; // TODO poner errores.
 
 }
 
